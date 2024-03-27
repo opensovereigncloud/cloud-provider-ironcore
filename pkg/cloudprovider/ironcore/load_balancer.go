@@ -6,6 +6,7 @@ package ironcore
 import (
 	"context"
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -101,8 +102,11 @@ func (o *ironcoreLoadBalancer) EnsureLoadBalancer(ctx context.Context, clusterNa
 	klog.V(2).InfoS("Getting LoadBalancer ports from Service", "Service", client.ObjectKeyFromObject(service))
 	var lbPorts []networkingv1alpha1.LoadBalancerPort
 	for _, svcPort := range service.Spec.Ports {
+		// OSC: Create a copy of the protocol to avoid a pointer to a part of other struct.
+		// This avoids unexpected behavior due to mutable references.
+		protocol := svcPort.Protocol
 		lbPorts = append(lbPorts, networkingv1alpha1.LoadBalancerPort{
-			Protocol: &svcPort.Protocol,
+			Protocol: &protocol,
 			Port:     svcPort.Port,
 		})
 	}
@@ -209,6 +213,22 @@ func waitLoadBalancerActive(ctx context.Context, ironcoreClient client.Client, e
 		return loadBalancerStatus, fmt.Errorf("timeout waiting for the LoadBalancer %s to become ready", client.ObjectKeyFromObject(loadBalancer))
 	}
 
+	// OSC: workaround for refresh issues on the machinepoollet
+	lbr := &networkingv1alpha1.LoadBalancerRouting{}
+	if err := ironcoreClient.Get(ctx, client.ObjectKey{Namespace: loadBalancer.Namespace, Name: loadBalancer.Name}, lbr); err != nil {
+		return loadBalancerStatus, err
+	}
+
+	if len(lbr.Labels) == 0 {
+		lbr.Labels = make(map[string]string)
+	}
+	formattedTime := strings.ReplaceAll(time.Now().Format(time.RFC3339), ":", "-")
+	formattedTime = strings.TrimSuffix(formattedTime, "Z") // If you want to remove 'Z' at the end
+	lbr.Labels["updated"] = formattedTime
+	if err := ironcoreClient.Update(ctx, lbr); err != nil {
+		return loadBalancerStatus, err
+	}
+
 	klog.V(2).InfoS("LoadBalancer became ready", "LoadBalancer", client.ObjectKeyFromObject(loadBalancer))
 	return loadBalancerStatus, nil
 }
@@ -218,6 +238,10 @@ func (o *ironcoreLoadBalancer) applyLoadBalancerRoutingForLoadBalancer(ctx conte
 	if err != nil {
 		return fmt.Errorf("failed to get NetworkInterfaces for Nodes: %w", err)
 	}
+
+	sort.Slice(loadBalacerDestinations, func(i, j int) bool {
+		return loadBalacerDestinations[i].TargetRef.UID < loadBalacerDestinations[j].TargetRef.UID
+	})
 
 	network := &networkingv1alpha1.Network{}
 	networkKey := client.ObjectKey{Namespace: o.ironcoreNamespace, Name: loadBalancer.Spec.NetworkRef.Name}
