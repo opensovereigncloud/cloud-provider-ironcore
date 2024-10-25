@@ -25,7 +25,7 @@ Copy kubeconfig to apply the config in kind
 ```shell
 kind get kubeconfig > ./config/kind/kubeconfig
 ```
-Create cloud-config file under ./config/kind/ with the help of sample file present under ./config/sample/cloud-config 
+Create cloud-config file under ./config/kind/ with the help of sample file present under ./config/sample/cloud-config
 
 Build and load the cloud controller into the kind cluster, then apply the config.
 

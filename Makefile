@@ -1,5 +1,6 @@
 BIN_NAME = "cloud-provider-ironcore"
 IMG ?= controller:latest
+CONTAINER_TOOL ?= podman
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.29.0
@@ -48,11 +49,11 @@ test: fmt vet envtest ## Run tests.
 .PHONY: docker-build
 # Build the docker image
 docker-build:
-	docker build . -t $(IMG)
+	$(CONTAINER_TOOL) build . -t $(IMG)
 
 .PHONY: docker-push
 docker-push:
-	docker push $(IMG)
+	$(CONTAINER_TOOL) push $(IMG)
 
 .PHONY: clean-local-bin
 clean-local-bin:
