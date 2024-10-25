@@ -10,19 +10,19 @@
 * Update the kubelet service on each node with Args ``--cloud-provider=external``
   Follow below steps to update the kubelet service environment variable ``KUBELET_KUBECONFIG_ARGS``
     * Open ``/etc/systemd/system/kubelet/10-kubeadm.conf``
-    * Add ``--cloud-provider=external``  into above config file 
-    
-    example: 
+    * Add ``--cloud-provider=external``  into above config file
+
+    example:
     ```
     Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --cloud-provider=external --kubeconfig=/etc/kubernetes/kubelet.conf"
     ```
-    
+
      * Restart the kubelet service
      ```
      $ systemctl daemon-reload
      $ systemctl restart kubelet
      ```
-    
+
 ## Steps to Deploy "Cloud-provider-ironcore"
 * To deploy clone the repository [cloud-provider-ironcore](https://github.com/ironcore-dev/cloud-provider-ironcore)
 
