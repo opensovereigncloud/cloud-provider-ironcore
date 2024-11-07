@@ -1,5 +1,6 @@
 stages:
   - build
+  - post-processing
 
 variables:
   MTR_PATH: "osc/gardener/ironcore/cloud-provider-ironcore"
@@ -58,3 +59,10 @@ build-tag:
     - /^v(\d+)\.(\d+).*$/
   except:
     - branches
+
+include:
+  - component: 'gitlab.devops.telekom.de/cas-devs/osc/common/pipeline-community/components/mtr/configure-repo@stable'
+    inputs:
+      image-list-type: 'none'
+      version: 'stable'
+      stage: 'post-processing'

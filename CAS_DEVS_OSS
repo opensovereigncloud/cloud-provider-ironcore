@@ -1,0 +1,15 @@
+team: iaas
+assignees:
+  - kajol.asabe
+  - rohit.kumar
+  - sujeet.phadtare
+  - usha.belgur
+cveLabels:
+  - "type::3-cve"
+  - "stream::onMetal"
+  - "Component: API"
+  - "why::Security"
+  - "squad::API"
+dueDays: 13
+cve:
+  - repository: osc/upstream/ironcore-dev/cloud-provider-ironcore
