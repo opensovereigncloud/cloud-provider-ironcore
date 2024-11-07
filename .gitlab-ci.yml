@@ -3,7 +3,7 @@ stages:
   - post-processing
 
 variables:
-  MTR_PATH: "osc/gardener/ironcore/cloud-provider-ironcore"
+  MTR_PATH: "osc/upstream/ironcore-dev/cloud-provider-ironcore"
   DOCKER_TARGET: "ironcore-cloud-controller-manager"
   GOPRIVATE: "gitlab.devops.telekom.de"
   GOPROXY: "https://proxy.golang.org"
