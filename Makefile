@@ -3,7 +3,7 @@ IMG ?= controller:latest
 CONTAINER_TOOL ?= podman
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
-ENVTEST_K8S_VERSION = 1.29.0
+ENVTEST_K8S_VERSION = 1.30.3
 
 ifeq (,$(shell go env GOBIN))
 GOBIN=$(shell go env GOPATH)/bin
@@ -74,7 +74,7 @@ GOLANGCI_LINT ?= $(LOCALBIN)/golangci-lint
 
 ## Tool Versions
 ADDLICENSE_VERSION ?= v1.1.1
-GOIMPORTS_VERSION ?= v0.25.0
+GOIMPORTS_VERSION ?= v0.26.0
 GOLANGCI_LINT_VERSION ?= v1.61.0
 
 .PHONY: envtest
